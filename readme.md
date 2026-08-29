@@ -1,6 +1,6 @@
 # Keycloak Deployment
 
-Docker Compose based deployment of **Keycloak 16.1.0** with MySQL, a custom Keycloak provider, and a customized NMIMS login theme.
+Docker Compose based deployment of **Keycloak 16.1.0** with MySQL, a custom Keycloak provider, and a customized domain login theme.
 
 ---
 
@@ -16,7 +16,7 @@ The deployment includes:
 * Persistent MySQL storage
 * Custom Keycloak provider
 * Custom Keycloak login theme
-* NMIMS branding
+* domain branding
 * Reverse proxy support
 * HTTPS frontend URL configuration
 * JVM memory configuration
@@ -29,14 +29,14 @@ The deployment includes:
 
 ```text
                          ┌──────────────────────┐
-                         │      LMS Users       │
+                         │      domain Users       │
                          └──────────┬───────────┘
                                     │
                                     │ HTTPS
                                     ▼
                          ┌──────────────────────┐
                          │ Reverse Proxy / LB   │
-                         │ lms.svkm.ac.in/kck   │
+                         │ domain.svkm.ac.in/kck   │
                          └──────────┬───────────┘
                                     │
                                     │ HTTP
@@ -50,7 +50,7 @@ The deployment includes:
               │   │      Keycloak 16.1.0         │     │
               │   │                              │     │
               │   │  Custom Provider             │     │
-              │   │  Custom NMIMS Theme          │     │
+              │   │  Custom domain Theme          │     │
               │   │                              │     │
               │   │  Container Port: 8080        │     │
               │   └──────────────┬───────────────┘     │
@@ -80,14 +80,14 @@ keycloak-deployment/
 ├── README.md
 │
 ├── provider/
-│   └── keycloak-lms-provider.jar
+│   └── keycloak-domain-provider.jar
 │
 ├── login.ftl
 ├── info.ftl
 ├── error.ftl
 ├── saml-post-form.ftl
 ├── messages_en.properties
-└── nmims-logo.png
+└── domain-logo.png
 ```
 
 ### File Description
@@ -96,13 +96,13 @@ keycloak-deployment/
 | --------------------------- | ------------------------------------ |
 | `docker-compose.yml`        | Docker Compose configuration         |
 | `provider/`                 | Custom Keycloak provider             |
-| `keycloak-lms-provider.jar` | Custom Keycloak provider JAR         |
+| `keycloak-domain-provider.jar` | Custom Keycloak provider JAR         |
 | `login.ftl`                 | Customized login page                |
 | `info.ftl`                  | Customized information page          |
 | `error.ftl`                 | Customized error page                |
 | `saml-post-form.ftl`        | Customized SAML POST form            |
 | `messages_en.properties`    | Customized Keycloak messages         |
-| `nmims-logo.png`            | NMIMS branding/logo                  |
+| `domain-logo.png`            | domain branding/logo                  |
 | `README.md`                 | Project and deployment documentation |
 
 ---
@@ -199,7 +199,7 @@ services:
       # Reverse Proxy / Frontend Configuration
       # --------------------------------------------------------------
       PROXY_ADDRESS_FORWARDING: "true"
-      KEYCLOAK_FRONTEND_URL: https://lms.svkm.ac.in/kck
+      KEYCLOAK_FRONTEND_URL: https://domain.svkm.ac.in/kck
 
       # --------------------------------------------------------------
       # JVM Configuration
@@ -217,25 +217,25 @@ services:
     volumes:
 
       # Custom Keycloak Provider
-      - ./provider/keycloak-lms-provider.jar:/opt/jboss/keycloak/standalone/deployments/keycloak-lms-provider.jar
+      - ./provider/keycloak-domain-provider.jar:/opt/jboss/keycloak/standalone/deployments/keycloak-domain-provider.jar
 
       # Custom Login Theme
-      - ./login.ftl:/opt/jboss/keycloak/themes/nmims/login/login.ftl
+      - ./login.ftl:/opt/jboss/keycloak/themes/domain/login/login.ftl
 
       # Custom Logo
-      - ./nmims-logo.png:/opt/jboss/keycloak/themes/nmims/login/resources/img/nmims-logo.png
+      - ./domain-logo.png:/opt/jboss/keycloak/themes/domain/login/resources/img/domain-logo.png
 
       # Custom Information Page
-      - ./info.ftl:/opt/jboss/keycloak/themes/nmims/login/info.ftl
+      - ./info.ftl:/opt/jboss/keycloak/themes/domain/login/info.ftl
 
       # Custom Error Page
-      - ./error.ftl:/opt/jboss/keycloak/themes/nmims/login/error.ftl
+      - ./error.ftl:/opt/jboss/keycloak/themes/domain/login/error.ftl
 
       # Custom SAML POST Form
-      - ./saml-post-form.ftl:/opt/jboss/keycloak/themes/nmims/login/saml-post-form.ftl
+      - ./saml-post-form.ftl:/opt/jboss/keycloak/themes/domain/login/saml-post-form.ftl
 
       # Custom Messages
-      - ./messages_en.properties:/opt/jboss/keycloak/themes/nmims/login/messages/messages_en.properties
+      - ./messages_en.properties:/opt/jboss/keycloak/themes/domain/login/messages/messages_en.properties
 
     # --------------------------------------------------------------
     # Port Mapping
@@ -424,7 +424,7 @@ PROXY_ADDRESS_FORWARDING: "true"
 The public Keycloak URL is:
 
 ```yaml
-KEYCLOAK_FRONTEND_URL: https://lms.svkm.ac.in/kck
+KEYCLOAK_FRONTEND_URL: https://domain.svkm.ac.in/kck
 ```
 
 Expected traffic flow:
@@ -434,7 +434,7 @@ User
  │
  │ HTTPS
  ▼
-https://lms.svkm.ac.in/kck
+https://domain.svkm.ac.in/kck
  │
  ▼
 Reverse Proxy
@@ -504,7 +504,7 @@ This enables fine-grained authorization functionality for Keycloak administratio
 A custom provider is included in:
 
 ```text
-provider/keycloak-lms-provider.jar
+provider/keycloak-domain-provider.jar
 ```
 
 The JAR is mounted into:
@@ -516,7 +516,7 @@ The JAR is mounted into:
 Docker Compose configuration:
 
 ```yaml
-- ./provider/keycloak-lms-provider.jar:/opt/jboss/keycloak/standalone/deployments/keycloak-lms-provider.jar
+- ./provider/keycloak-domain-provider.jar:/opt/jboss/keycloak/standalone/deployments/keycloak-domain-provider.jar
 ```
 
 Verify the provider:
@@ -529,7 +529,7 @@ docker exec keycloak ls -lh \
 Expected:
 
 ```text
-keycloak-lms-provider.jar
+keycloak-domain-provider.jar
 ```
 
 Check the Keycloak logs for deployment errors:
@@ -545,13 +545,13 @@ docker logs keycloak
 The deployment uses a custom theme named:
 
 ```text
-nmims
+domain
 ```
 
 The theme is mounted into:
 
 ```text
-/opt/jboss/keycloak/themes/nmims/login/
+/opt/jboss/keycloak/themes/domain/login/
 ```
 
 The following files are customized:
@@ -562,7 +562,7 @@ info.ftl
 error.ftl
 saml-post-form.ftl
 messages/messages_en.properties
-resources/img/nmims-logo.png
+resources/img/domain-logo.png
 ```
 
 This provides customization for:
@@ -572,7 +572,7 @@ This provides customization for:
 * Information page
 * SAML POST page
 * Login messages
-* NMIMS logo and branding
+* domain logo and branding
 
 ---
 
@@ -602,7 +602,7 @@ info.ftl
 error.ftl
 saml-post-form.ftl
 messages_en.properties
-nmims-logo.png
+domain-logo.png
 provider/
 ```
 
@@ -615,7 +615,7 @@ ls -lh provider/
 Expected:
 
 ```text
-keycloak-lms-provider.jar
+keycloak-domain-provider.jar
 ```
 
 ---
@@ -776,7 +776,7 @@ http://SERVER-IP:8083
 For the configured public URL:
 
 ```text
-https://lms.svkm.ac.in/kck
+https://domain.svkm.ac.in/kck
 ```
 
 The public URL should be accessed through the configured reverse proxy.
@@ -852,7 +852,7 @@ Removing it can result in complete loss of the Keycloak database.
 Replace the provider:
 
 ```bash
-cp new-provider.jar provider/keycloak-lms-provider.jar
+cp new-provider.jar provider/keycloak-domain-provider.jar
 ```
 
 Restart Keycloak:
@@ -886,7 +886,7 @@ info.ftl
 error.ftl
 saml-post-form.ftl
 messages_en.properties
-nmims-logo.png
+domain-logo.png
 ```
 
 Restart Keycloak:
@@ -1043,14 +1043,14 @@ Check:
 
 ```bash
 docker exec keycloak ls -lh \
-  /opt/jboss/keycloak/themes/nmims/login/
+  /opt/jboss/keycloak/themes/domain/login/
 ```
 
 Check the logo:
 
 ```bash
 docker exec keycloak ls -lh \
-  /opt/jboss/keycloak/themes/nmims/login/resources/img/
+  /opt/jboss/keycloak/themes/domain/login/resources/img/
 ```
 
 Restart:
@@ -1251,7 +1251,7 @@ Before upgrading, test:
 * Custom provider compatibility
 * Custom theme compatibility
 * Database migration
-* Existing realms
+* Existing readomain
 * Clients
 * Authentication flows
 * SAML integrations
@@ -1299,7 +1299,7 @@ Maintain a database backup before performing any Keycloak upgrade.
 * [ ] Provider deployment verified
 * [ ] Custom theme deployed
 * [ ] Login page verified
-* [ ] NMIMS logo verified
+* [ ] domain logo verified
 * [ ] SAML page verified
 
 ## Validation
@@ -1373,11 +1373,11 @@ docker stats
 | Database Name      | `keycloak`                         |
 | Database User      | `kcuser`                           |
 | MySQL Persistence  | `mysql_data`                       |
-| Custom Provider    | `keycloak-lms-provider.jar`        |
-| Custom Theme       | `nmims`                            |
+| Custom Provider    | `keycloak-domain-provider.jar`        |
+| Custom Theme       | `domain`                            |
 | Initial JVM Heap   | `512 MB`                           |
 | Maximum JVM Heap   | `1024 MB`                          |
-| Public URL         | `https://lms.svkm.ac.in/kck`       |
+| Public URL         | `https://domain.svkm.ac.in/kck`       |
 | Deployment Method  | Docker Compose                     |
 
 ---
